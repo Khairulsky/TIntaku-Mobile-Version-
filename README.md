@@ -1,6 +1,17 @@
 # Tintaku Mobile Flutter Base
 
-A new Flutter project.
+Pengembangan apliaksi mobile dari Website Tintaku.
+
+# Bina Sarana Informatics University student assignment project for S4 Information Systems Study Program, Mobile Programming course.
+<img width="260" height="267" alt="logo-universitas-bina-sarana-informatika-ubsi" src="https://github.com/user-attachments/assets/180d953d-2ec1-46cf-b977-2690e353196b" />
+
+
+Project Team
+- Muhammad Farhan
+- Aditya aldrin subagja
+- Chairul anwar
+- Euis Susanti
+- Angga Nugroho
 
 ## Getting Started
 
