@@ -68,9 +68,12 @@ class DetailPage extends StatelessWidget {
               height: 320,
               child: Hero(
                 tag: namaProduk,
-                child: Image.asset(
-                  gambar,
-                  fit: BoxFit.contain,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.asset(
+                    gambar,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
@@ -402,11 +405,17 @@ class DetailPage extends StatelessWidget {
                                   padding:
                                       const EdgeInsets
                                           .all(10),
-                                  child:
-                                      Image.asset(
-                                    gambar,
-                                    fit: BoxFit
-                                        .contain,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius
+                                            .circular(
+                                                12),
+                                    child:
+                                        Image.asset(
+                                      gambar,
+                                      fit: BoxFit
+                                          .contain,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -475,7 +484,7 @@ class DetailPage extends StatelessWidget {
       "nama": namaProduk,
       "gambar": gambar,
       "harga": int.parse(
-        harga.replaceAll("Rp.", "").replaceAll(".", "").trim(),
+        harga.replaceAll(RegExp(r'[^\d]'), ''),
       ),
       "jumlah": 1,
     });

@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import '../../models/order.dart';
 import '../success/success_page.dart';
+import '../keranjang/keranjang_page.dart';
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({super.key});
+  final List<Map<String, dynamic>> orderItems;
+  final int totalAmount;
+  final Map<String, String>? deliveryAddress;
+
+  const PaymentPage({
+    super.key,
+    required this.orderItems,
+    required this.totalAmount,
+    this.deliveryAddress,
+  });
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
@@ -282,21 +293,21 @@ class _PaymentPageState extends State<PaymentPage> {
           child: Row(
             children: [
               // Total Pembayaran (Sisi Kiri)
-              const Expanded(
+              Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Total Pembayaran",
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      "Rp240.000",
-                      style: TextStyle(
+                      "Rp${widget.totalAmount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')}",
+                      style: const TextStyle(
                         fontSize: 22,
-                        color: Colors.blue,
+                        color: Color(0xff46C6D9),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -321,12 +332,20 @@ class _PaymentPageState extends State<PaymentPage> {
                   onPressed: selectedMethod.isEmpty
                       ? null 
                       : () {
-                          Navigator.push(
+                                                    Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) => const SuccessPage(),
                             ),
                           );
+                          // Record order as paid
+                          final newOrder = Order(
+                            orderItems: List<Map<String, dynamic>>.from(widget.orderItems),
+                            totalAmount: widget.totalAmount,
+                            status: 'Sudah Bayar',
+                          );
+                          OrderRepository().addOrder(newOrder);
+                          globalCartItems.clear();
                         },
                   child: Text(
                     selectedMethod.isEmpty 

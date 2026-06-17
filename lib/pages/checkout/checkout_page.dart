@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../payment/payment_page.dart';
+import '../keranjang/keranjang_page.dart';
+import '../address/add_edit_address_page.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -12,30 +14,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
   String kurir = "JNE";
   String pembayaran = "QRIS";
 
-  // 1. Kuncinya di sini: Buat data produk menjadi List dinamis agar bisa dimanipulasi
-  List<Map<String, dynamic>> daftarProduk = [
-    {
-      "id": 1,
-      "image": "assets/img/epson_hitam.png.jpeg",
-      "nama": "Tinta Epson 664 Black",
-      "harga": 75000,
-      "jumlah": 1
-    },
-    {
-      "id": 2,
-      "image": "assets/img/hp_hitam.png.jpeg",
-      "nama": "Tinta HP 682 Color",
-      "harga": 80000,
-      "jumlah": 1
-    },
-    {
-      "id": 3,
-      "image": "assets/img/canon_hitam.png.jpeg",
-      "nama": "Tinta Canon GI-790 Black",
-      "harga": 85000,
-      "jumlah": 1
-    }
-  ];
+  // Daftar alamat pengiriman (bisa lebih dari satu)
+  List<Map<String, String>> addresses = [];
+  int selectedAddressIndex = -1; // -1 berarti belum ada alamat
+
+  // Gunakan list global dari keranjang agar checkout menampilkan item sebenarnya
+  List<Map<String, dynamic>> get daftarProduk => globalCartItems;
 
   // Fungsi hitung total harga otomatis berdasarkan produk yang ada
   int get subtotal {
@@ -96,7 +80,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
-                produk["image"],
+                produk["gambar"],
                 fit: BoxFit.contain,
               ),
             ),
@@ -151,11 +135,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   onTap: () {
                     String namaHapus = produk["nama"];
                     setState(() {
-                      daftarProduk.removeAt(index); // Menghapus dari list berdasarkan index
+                      globalCartItems.removeAt(index); // Menghapus dari list global
                     });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("$namaHapus dihapus")),
-                    );
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$namaHapus dihapus")));
                   },
                   child: const Icon(
                     Icons.delete_outline,
@@ -178,10 +160,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       InkWell(
                         onTap: () {
                           if (produk["jumlah"] > 1) {
-                            setState(() {
-                              produk["jumlah"]--;
-                            });
-                          }
+                                setState(() {
+                                  produk["jumlah"]--;
+                                });
+                              }
                         },
                         child: const Icon(Icons.remove, size: 16),
                       ),
@@ -206,6 +188,44 @@ class _CheckoutPageState extends State<CheckoutPage> {
         ],
       ),
     );
+  }
+
+  void _navigateToAddressPage({int? index}) async {
+    final isEdit = index != null && index >= 0 && index < addresses.length;
+    final result = await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddEditAddressPage(
+          initialAddress: isEdit ? addresses[index!] : null,
+          addressIndex: index,
+        ),
+      ),
+    );
+
+    if (result != null) {
+      final newAddr = result['address'] as Map<String, String>;
+      final addrIndex = result['index'] as int?;
+
+      setState(() {
+        if (addrIndex != null && addrIndex >= 0 && addrIndex < addresses.length) {
+          addresses[addrIndex] = newAddr;
+          selectedAddressIndex = addrIndex;
+        } else {
+          addresses.add(newAddr);
+          selectedAddressIndex = addresses.length - 1;
+        }
+      });
+    }
+  }
+
+  String _formatFullAddress(Map<String, String> a) {
+    final parts = <String>[];
+    if ((a['detail'] ?? '').isNotEmpty) parts.add(a['detail']!);
+    if ((a['kelurahan'] ?? '').isNotEmpty) parts.add('Kel. ${a['kelurahan']}');
+    if ((a['kecamatan'] ?? '').isNotEmpty) parts.add('Kec. ${a['kecamatan']}');
+    if ((a['kabupaten'] ?? '').isNotEmpty) parts.add('${a['kabupaten']}');
+    if ((a['kota'] ?? '').isNotEmpty) parts.add(a['kota']!);
+    return parts.join(', ');
   }
 
   @override
@@ -266,21 +286,48 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             ),
                           ],
                         ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text("Ubah"),
-                        ),
+                        // Tombol Ubah / Tambah akan ditampilkan di dalam body di bawah
+                        const SizedBox.shrink(),
                       ],
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      "Aditya Aldrin",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 5),
-                    const Text("0812-3456-7890"),
-                    const SizedBox(height: 10),
-                    const Text("Jl. Melati No.10 RT 02/RW 05\nKec. Sukajadi, Kota Bandung"),
+                    // Jika belum ada alamat, tampilkan tombol tambah
+                    if (selectedAddressIndex == -1) ...[
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff46C6D9)),
+                          onPressed: () => _navigateToAddressPage(),
+                          child: const Text('Tambah Alamat'),
+                        ),
+                      ),
+                    ] else ...[
+                      Text(
+                        addresses[selectedAddressIndex]["nama"] ?? '',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(addresses[selectedAddressIndex]["phone"] ?? ''),
+                      const SizedBox(height: 10),
+                      Text(
+                        _formatFullAddress(addresses[selectedAddressIndex]),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => _navigateToAddressPage(index: selectedAddressIndex),
+                            child: const Text('Ubah'),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: () => _navigateToAddressPage(),
+                            child: const Text('Tambah'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -521,7 +568,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       : () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const PaymentPage()),
+                            MaterialPageRoute(
+                              builder: (_) => PaymentPage(
+                                orderItems: daftarProduk,
+                                totalAmount: totalPembayaran,
+                                deliveryAddress: selectedAddressIndex != -1
+                                    ? addresses[selectedAddressIndex]
+                                    : null,
+                              ),
+                            ),
                           );
                         },
                   child: const Text(

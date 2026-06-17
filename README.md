@@ -1,6 +1,23 @@
+<<<<<<< HEAD
 # latihan_flutter4
 
 A new Flutter project.
+=======
+# Tintaku Mobile Flutter Base
+
+Pengembangan apliaksi mobile dari Website Tintaku.
+
+# Bina Sarana Informatics University student assignment project for S4 Information Systems Study Program, Mobile Programming course.
+<img width="260" height="267" alt="logo-universitas-bina-sarana-informatika-ubsi" src="https://github.com/user-attachments/assets/180d953d-2ec1-46cf-b977-2690e353196b" />
+
+
+Project Team
+- Muhammad Farhan
+- Aditya aldrin subagja
+- Chairul anwar
+- Euis Susanti
+- Angga Nugroho
+>>>>>>> a4750e24b47bb65c0922231e034fcc594d5c4679
 
 ## Getting Started
 

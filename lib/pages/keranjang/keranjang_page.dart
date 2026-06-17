@@ -7,6 +7,11 @@ import '../checkout/checkout_page.dart';
 // =========================================================================
 List<Map<String, dynamic>> globalCartItems = [];
 
+// =========================================================================
+// 2. ORDER HISTORY GLOBAL (Menyimpan riwayat pesanan yang sudah dibayar)
+// =========================================================================
+List<Map<String, dynamic>> globalOrderHistory = [];
+
 class KeranjangPage extends StatefulWidget {
   const KeranjangPage({super.key});
 

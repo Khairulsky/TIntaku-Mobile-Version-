@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/custom_bottom_nav.dart';
+import '../riwayat/riwayat_page.dart';
+
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -146,27 +148,32 @@ class ProfilePage extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _menuTile(Icons.person_outline, "Informasi Akun"),
+                    _menuTile(Icons.person_outline, "Informasi Akun", onTap: () {}),
 
                     _divider(),
 
-                    _menuTile(Icons.location_on_outlined, "Alamat Pengiriman"),
+                    _menuTile(Icons.location_on_outlined, "Alamat Pengiriman", onTap: () {}),
 
                     _divider(),
 
-                    _menuTile(Icons.history, "Riwayat Pembelian"),
+                    _menuTile(Icons.history, "Riwayat Pembelian", onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RiwayatPage()),
+                      );
+                    }),
 
                     _divider(),
 
-                    _menuTile(Icons.favorite_border, "Produk Favorit"),
+                    _menuTile(Icons.favorite_border, "Produk Favorit", onTap: () {}),
 
                     _divider(),
 
-                    _menuTile(Icons.support_agent, "Pusat Bantuan"),
+                    _menuTile(Icons.support_agent, "Pusat Bantuan", onTap: () {}),
 
                     _divider(),
 
-                    _menuTile(Icons.settings_outlined, "Pengaturan"),
+                    _menuTile(Icons.settings_outlined, "Pengaturan", onTap: () {}),
                   ],
                 ),
               ),
@@ -213,12 +220,12 @@ class ProfilePage extends StatelessWidget {
     return const Divider(height: 1, indent: 15, endIndent: 15);
   }
 
-  static Widget _menuTile(IconData icon, String title) {
+  static Widget _menuTile(IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
       leading: Icon(icon, color: const Color(0xff46C6D9)),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }

@@ -29,21 +29,62 @@ class CustomBottomNav extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            height: 42,
-            width: 42,
+            height: 48,
+            width: 48,
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xffB9EAF6) : Colors.transparent,
+              gradient: isSelected
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xff46C6D9),
+                        const Color(0xff2BA8C6),
+                      ],
+                    )
+                  : LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.grey.shade100,
+                        Colors.grey.shade200,
+                      ],
+                    ),
               shape: BoxShape.circle,
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: const Color(0xff46C6D9).withValues(alpha: 0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                      BoxShadow(
+                        color: const Color(0xff46C6D9).withValues(alpha: 0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
-            child: Icon(icon, color: Colors.black, size: 26),
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.white : Colors.grey.shade600,
+              size: 28,
+            ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 6),
           Text(
             title,
             style: TextStyle(
-              fontSize: 12,
-              color: Colors.black,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontSize: 11,
+              color: isSelected ? const Color(0xff46C6D9) : Colors.grey.shade600,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              letterSpacing: isSelected ? 0.3 : 0,
             ),
           ),
         ],

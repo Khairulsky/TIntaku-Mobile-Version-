@@ -432,9 +432,12 @@ class BerandaPage extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Image.asset(
-                gambar,
-                fit: BoxFit.contain,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  gambar,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
@@ -510,10 +513,10 @@ class BerandaPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const DetailPage(
-                                  namaProduk: "Tinta Epson 003 Black Original",
-                                  harga: "Rp 200.000",
-                                  gambar: "assets/img/epson_hitam.png.jpeg",
+                                builder: (_) => DetailPage(
+                                  namaProduk: nama,
+                                  harga: harga,
+                                  gambar: gambar,
                                   deskripsi: "Tinta berkualitas tinggi untuk kebutuhan cetak sehari-hari.",
                                 ),
                               ),
@@ -543,12 +546,22 @@ class BerandaPage extends StatelessWidget {
                               padding: EdgeInsets.zero,
                               onPressed: () {
 
-                                globalCartItems.add({
-                                  "nama": "Tinta Epson 003 Black Original",
-                                  "gambar": "assets/img/epson_hitam.png.jpeg",
-                                  "harga": 200000,
-                                  "jumlah": 1,
-                                });
+                                int index = globalCartItems.indexWhere((item) => item["nama"] == nama);
+
+                                if (index != -1) {
+                                  globalCartItems[index]["jumlah"]++;
+                                } else {
+                                  globalCartItems.add({
+                                    "nama": nama,
+                                    "gambar": gambar,
+                                    "harga": int.parse(harga.replaceAll(RegExp(r'[^\d]'), '')),
+                                    "jumlah": 1,
+                                  });
+                                }
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Produk berhasil ditambahkan ke keranjang")),
+                                );
 
                                 Navigator.push(
                                   context,
